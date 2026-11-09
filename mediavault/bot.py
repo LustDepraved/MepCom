@@ -31,7 +31,7 @@ AUDIO_EXT = {".mp3", ".wav", ".m4a", ".ogg", ".flac", ".aac", ".opus"}
 
 def clean_name(name):
     name = Path(name or "media.bin").name
-    name = re.sub(r"[^\\w.() -]+", "_", name).strip(" .")
+    name = re.sub(r"[^\w.() -]+", "_", name).strip(" .")
     return (name or "media.bin")[:90]
 
 def menu():
@@ -52,6 +52,8 @@ def formats():
 
 async def ffmpeg(source: Path, mode: str) -> Path:
     if mode == "audio":
+        if source.suffix.lower() == ".mp3":
+            return source
         target = source.with_suffix(".mp3")
         args = ["ffmpeg", "-y", "-i", str(source), "-vn", "-codec:a", "libmp3lame", "-q:a", "3", str(target)]
     else:
